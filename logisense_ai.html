@@ -1,0 +1,2117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LogiSense AI — Intelligent E-Commerce Logistics Control Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080c15;
+  --sidebar: #0b1120;
+  --card: #0f172a;
+  --card-hover: #131e36;
+  --border: #1e293b;
+  --border-light: #334155;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --cyan: #06b6d4;
+  --cyan-light: #22d3ee;
+  --cyan-glow: rgba(6, 182, 212, 0.2);
+  --violet: #7c3aed;
+  --violet-light: #a78bfa;
+  --violet-glow: rgba(124, 58, 237, 0.2);
+  --green: #10b981;
+  --green-bg: rgba(16, 185, 129, 0.15);
+  --amber: #f59e0b;
+  --amber-bg: rgba(245, 158, 11, 0.15);
+  --red: #ef4444;
+  --red-bg: rgba(239, 68, 68, 0.15);
+  --blue: #3b82f6;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--sidebar); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+
+/* Layout Shell */
+.app-container { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+
+/* Left Sidebar */
+aside {
+  width: 250px;
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  z-index: 20;
+}
+.brand-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px var(--cyan-glow);
+  flex-shrink: 0;
+}
+.brand-title {
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.3px;
+  background: linear-gradient(90deg, #fff, var(--cyan-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.brand-pill {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(6, 182, 212, 0.2);
+  color: var(--cyan-light);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+}
+.brand-sub { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+.env-pill {
+  padding: 10px 14px;
+  background: rgba(8, 12, 21, 0.7);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+}
+.env-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  display: inline-block;
+  margin-right: 5px;
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.nav-section-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 6px 10px 4px;
+}
+.nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+.nav-btn:hover { background: rgba(15, 23, 42, 0.7); color: #fff; }
+.nav-btn.active {
+  background: linear-gradient(90deg, rgba(6, 182, 212, 0.15), rgba(124, 58, 237, 0.08));
+  color: var(--cyan-light);
+  border-color: rgba(6, 182, 212, 0.35);
+  font-weight: 600;
+}
+.nav-icon { width: 16px; height: 16px; margin-right: 10px; flex-shrink: 0; fill: currentColor; }
+.nav-badge-ai {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: rgba(124, 58, 237, 0.2);
+  color: var(--violet-light);
+  border: 1px solid rgba(124, 58, 237, 0.4);
+}
+
+.sidebar-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 10.5px;
+  color: var(--text-dim);
+  background: rgba(8, 12, 21, 0.5);
+}
+
+/* Main Area */
+.main-area { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+/* Top Navbar */
+header {
+  height: 60px;
+  background: rgba(11, 17, 32, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+.breadcrumbs { font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; }
+.page-header-title { font-size: 15px; font-weight: 700; color: #fff; }
+
+.search-box {
+  flex: 1;
+  max-width: 380px;
+  position: relative;
+  margin: 0 12px;
+}
+.search-box input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 12px 7px 32px;
+  color: var(--text);
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.search-box input:focus { border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan-glow); }
+.search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; fill: var(--text-dim); }
+
+.top-controls { display: flex; align-items: center; gap: 10px; }
+.filter-select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  outline: none;
+}
+.btn-icon {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  padding: 7px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.btn-icon:hover { color: var(--cyan-light); border-color: var(--cyan); }
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 10px;
+  border-left: 1px solid var(--border);
+}
+.user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 11px;
+}
+
+/* Page Workspace */
+main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  background: var(--bg);
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.2s ease-in; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Cards & Grid Utilities */
+.grid { display: grid; gap: 16px; }
+.grid-4 { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.grid-3 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.grid-2 { grid-template-columns: 2fr 1fr; }
+@media (max-width: 1024px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  position: relative;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.card:hover { border-color: var(--border-light); }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.card-label { font-size: 11px; text-transform: uppercase; font-weight: 600; color: var(--text-dim); letter-spacing: 0.3px; }
+.card-val { font-size: 24px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: #fff; margin: 4px 0; }
+.card-sub { font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  border: 1px solid transparent;
+}
+.badge-green { background: var(--green-bg); color: var(--green); border-color: rgba(16, 185, 129, 0.3); }
+.badge-amber { background: var(--amber-bg); color: var(--amber); border-color: rgba(245, 158, 11, 0.3); }
+.badge-red { background: var(--red-bg); color: var(--red); border-color: rgba(239, 68, 68, 0.3); }
+.badge-cyan { background: var(--cyan-glow); color: var(--cyan-light); border-color: rgba(6, 182, 212, 0.3); }
+.badge-violet { background: var(--violet-glow); color: var(--violet-light); border-color: rgba(124, 58, 237, 0.3); }
+
+/* Tables */
+.table-wrapper {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.table-header-bar {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.table-title { font-size: 13px; font-weight: 700; color: #fff; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+thead tr { background: rgba(8, 12, 21, 0.8); border-bottom: 1px solid var(--border); }
+th { padding: 10px 14px; font-size: 10.5px; text-transform: uppercase; font-weight: 600; color: var(--text-dim); letter-spacing: 0.4px; }
+td { padding: 11px 14px; border-bottom: 1px solid rgba(30, 41, 59, 0.6); color: var(--text); }
+tbody tr:hover { background: rgba(15, 23, 42, 0.8); cursor: pointer; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* Custom Sliders */
+.slider-group { margin-bottom: 14px; }
+.slider-labels { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+.slider-labels span:last-child { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--cyan-light); }
+input[type=range] {
+  width: 100%;
+  accent-color: var(--cyan);
+  background: var(--bg);
+  height: 6px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+/* Copilot Chat */
+.copilot-shell {
+  display: flex;
+  gap: 16px;
+  height: calc(100vh - 120px);
+}
+.copilot-history {
+  width: 260px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.copilot-chat {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.chat-stream { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.chat-msg { display: flex; gap: 12px; max-width: 800px; }
+.chat-msg.user { margin-left: auto; flex-direction: row-reverse; }
+.chat-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(124, 58, 237, 0.25);
+  border: 1px solid rgba(124, 58, 237, 0.4);
+  color: var(--violet-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.chat-msg.user .chat-avatar {
+  background: linear-gradient(135deg, var(--cyan), var(--blue));
+  color: #fff;
+  border: 0;
+}
+.chat-bubble {
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.chat-msg.assistant .chat-bubble { background: var(--bg); border: 1px solid var(--border); color: #e2e8f0; width: 100%; }
+.chat-msg.user .chat-bubble { background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); color: #fff; }
+.prompt-chip {
+  background: rgba(8, 12, 21, 0.7);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+  margin-bottom: 6px;
+}
+.prompt-chip:hover { border-color: var(--cyan); color: var(--cyan-light); }
+
+.chat-input-row {
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  background: rgba(8, 12, 21, 0.6);
+}
+.chat-input-row input {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #fff;
+  font-size: 12.5px;
+  outline: none;
+}
+.chat-input-row input:focus { border-color: var(--cyan); }
+.btn-primary {
+  background: linear-gradient(90deg, var(--cyan), var(--violet));
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  padding: 0 18px;
+  cursor: pointer;
+  font-size: 12.5px;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.9; }
+
+/* Order Inspection Drawer */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: none;
+  justify-content: flex-end;
+}
+.drawer-overlay.open { display: flex; animation: fadeIn 0.2s; }
+.drawer {
+  width: 100%;
+  max-width: 540px;
+  background: var(--sidebar);
+  border-left: 1px solid var(--border);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.6);
+  animation: slideIn 0.25s ease-out;
+}
+@keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+.drawer-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--card);
+}
+.drawer-body { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+
+/* Timeline in Drawer */
+.timeline { position: relative; padding-left: 20px; margin-top: 8px; }
+.timeline::before { content: ''; position: absolute; left: 6px; top: 6px; bottom: 6px; width: 2px; background: var(--border); }
+.tl-item { position: relative; margin-bottom: 16px; }
+.tl-dot {
+  position: absolute;
+  left: -20px;
+  top: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--border-light);
+  background: var(--bg);
+}
+.tl-dot.done { background: var(--green); border-color: #34d399; box-shadow: 0 0 8px rgba(16,185,129,0.5); }
+.tl-dot.alert { background: var(--red); border-color: #f87171; box-shadow: 0 0 8px rgba(239,68,68,0.5); }
+.tl-dot.active { background: var(--cyan); border-color: #38bdf8; animation: pulse 1s infinite; }
+.tl-title { font-weight: 600; font-size: 12px; color: #fff; }
+.tl-meta { font-size: 10.5px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; margin: 1px 0 3px; }
+.tl-desc { font-size: 11.5px; color: var(--text-muted); }
+
+/* SVG Mini Charts */
+.sparkline { width: 100%; height: 28px; stroke: var(--cyan); stroke-width: 2; fill: none; }
+.svg-bar-track { background: var(--bg); height: 8px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+.svg-bar-fill { height: 100%; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Left Navigation Sidebar -->
+  <aside>
+    <div class="brand-header">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+      </div>
+      <div>
+        <div class="brand-title">
+          LogiSense <span class="brand-pill">AI</span>
+        </div>
+        <div class="brand-sub">Logistics Control Center</div>
+      </div>
+    </div>
+
+    <!-- Live Synthetic Environment Status -->
+    <div class="env-pill">
+      <div class="env-row">
+        <span style="color:var(--text-dim); text-transform:uppercase; font-size:9.5px; font-weight:700;">Environment</span>
+        <span style="color:var(--green); font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:600;">
+          <span class="pulse-dot"></span>LIVE SYNTHETIC
+        </span>
+      </div>
+      <div class="env-row" style="color:var(--text-muted); font-family:'JetBrains Mono',monospace; font-size:10.5px;">
+        <span>Sim Date:</span>
+        <span style="color:#fff;">2026-10-14 18:00</span>
+      </div>
+    </div>
+
+    <!-- Navigation List (10 Functional Tabs) -->
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Command Telemetry</div>
+      
+      <button class="nav-btn active" onclick="switchTab('overview')">
+        <span>Executive Overview</span>
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('delivery')">
+        <span>Delivery Intelligence</span>
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('root-cause')">
+        <span>Root Cause Diagnostics</span>
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('warehouse')">
+        <span>Warehouse Operations</span>
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('routes')">
+        <span>Route Optimization</span>
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('staffing')">
+        <span>Staffing Intelligence</span>
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('inventory')">
+        <span>Inventory Intelligence</span>
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('copilot')">
+        <span>Ops Copilot AI</span>
+        <span class="nav-badge-ai">AI AGENT</span>
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('simulator')">
+        <span>Scenario Simulator</span>
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('data-explorer')">
+        <span>Data & Model Explorer</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+        <span>ML Core:</span>
+        <span style="color:var(--cyan-light); font-family:'JetBrains Mono',monospace;">Scikit-RF 1.4</span>
+      </div>
+      <div style="display:flex; justify-content:space-between;">
+        <span>Network SLA:</span>
+        <span style="color:var(--green); font-family:'JetBrains Mono',monospace;">95.1% (NOMINAL)</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Space -->
+  <div class="main-area">
+    <!-- Top Command Bar -->
+    <header>
+      <div>
+        <div class="breadcrumbs">
+          <span>LogiSense Control</span>
+          <span>/</span>
+          <span style="color:var(--cyan-light);" id="breadcrumb-current">Executive Overview</span>
+        </div>
+        <div class="page-header-title" id="page-title">Executive Control Center</div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="global-search" placeholder="Search order ORD-2026..., city, carrier, or SKU..." oninput="handleSearch(this.value)">
+      </div>
+
+      <!-- Controls -->
+      <div class="top-controls">
+        <select class="filter-select" id="wh-filter" onchange="handleWarehouseChange(this.value)">
+          <option value="ALL">All Warehouses (5)</option>
+          <option value="WH-ORD">WH-ORD Chicago Central</option>
+          <option value="WH-EWR">WH-EWR Newark Gateway</option>
+          <option value="WH-SEA">WH-SEA Seattle Pacific</option>
+          <option value="WH-DFW">WH-DFW Dallas Central</option>
+          <option value="WH-RNO">WH-RNO Reno Regional</option>
+        </select>
+
+        <button class="btn-icon" title="Refresh Live Telemetry" onclick="refreshTelemetry()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+        </button>
+
+        <div class="user-badge">
+          <div class="user-avatar">OP</div>
+          <div style="text-align:left;">
+            <div style="font-size:11.5px; font-weight:600; color:#fff;">Operations Lead</div>
+            <div style="font-size:10px; color:var(--text-dim); font-family:'JetBrains Mono',monospace;">Control Room #1</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Dynamic Workspace -->
+    <main>
+      <!-- TAB 1: EXECUTIVE OVERVIEW -->
+      <section id="tab-overview" class="tab-content active">
+        <!-- 8 KPI Cards -->
+        <div class="grid grid-4" style="margin-bottom:18px;">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-label">Total Orders</span>
+              <span class="badge badge-green">↑ +6.4%</span>
+            </div>
+            <div class="card-val" id="kpi-total-orders">10,500</div>
+            <div class="card-sub">Prev: 9,870 orders</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-label">On-Time Delivery Rate</span>
+              <span class="badge badge-green">↑ +0.8%</span>
+            </div>
+            <div class="card-val" id="kpi-otd" style="color:var(--green);">95.1%</div>
+            <div class="card-sub">Target: &gt;95.0% SLA</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-label">Delayed Orders</span>
+              <span class="badge badge-red">↑ +12.1%</span>
+            </div>
+            <div class="card-val" id="kpi-delays" style="color:var(--red);">514</div>
+            <div class="card-sub">Chicago/Newark backlogs</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-label">Average Delay</span>
+              <span class="badge badge-amber">↑ +1.2h</span>
+            </div>
+            <div class="card-val" id="kpi-avg-delay">11.3 hrs</div>
+            <div class="card-sub">Across 514 delayed orders</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-label">Customer Complaints</span>
+              <span class="badge badge-red">5.05%</span>
+            </div>
+            <div class="card-val" id="kpi-complaints" style="color:var(--amber);">531</div>
+            <div class="card-sub">Driven by carrier delays</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-label">High-Risk Active Orders</span>
+              <span class="badge badge-red">Flagged</span>
+            </div>
+            <div class="card-val" id="kpi-high-risk" style="color:var(--red);">218</div>
+            <div class="card-sub">Predicted &gt;35% late probability</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-label">Logistics Cost / Order</span>
+              <span class="badge badge-amber">+$0.95</span>
+            </div>
+            <div class="card-val" id="kpi-cost">$25.53</div>
+            <div class="card-sub">Includes carrier linehaul</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-label">Network Utilization</span>
+              <span class="badge badge-green">Nominal</span>
+            </div>
+            <div class="card-val" id="kpi-utilization">81.3%</div>
+            <div class="card-sub">Chicago peak at 89.2%</div>
+          </div>
+        </div>
+
+        <!-- Middle Analytics Grid -->
+        <div class="grid grid-2" style="margin-bottom:18px;">
+          <!-- 35-Day Trend Chart -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 style="font-size:13.5px; font-weight:700; color:#fff;">Delivery Performance & Complaint Telemetry</h3>
+                <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Daily volume distribution, SLA adherence, and customer escalation rate</div>
+              </div>
+              <div style="display:flex; gap:12px; font-size:11px;">
+                <span style="color:var(--cyan); font-weight:600;">● On-Time</span>
+                <span style="color:var(--red); font-weight:600;">● Delayed</span>
+                <span style="color:var(--amber); font-weight:600;">● Complaints</span>
+              </div>
+            </div>
+
+            <!-- SVG Visual Trend Chart -->
+            <div style="height:190px; margin-top:10px; position:relative;">
+              <svg width="100%" height="100%" viewBox="0 0 600 180" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="grad-cyan" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.0"/>
+                  </linearGradient>
+                  <linearGradient id="grad-red" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ef4444" stop-opacity="0.4"/>
+                    <stop offset="100%" stop-color="#ef4444" stop-opacity="0.0"/>
+                  </linearGradient>
+                </defs>
+                <!-- Grid Lines -->
+                <line x1="0" y1="40" x2="600" y2="40" stroke="#1e293b" stroke-dasharray="4"/>
+                <line x1="0" y1="90" x2="600" y2="90" stroke="#1e293b" stroke-dasharray="4"/>
+                <line x1="0" y1="140" x2="600" y2="140" stroke="#1e293b" stroke-dasharray="4"/>
+                <!-- Area On-Time -->
+                <path d="M0,70 Q75,60 150,75 T300,55 T450,65 T600,50 L600,180 L0,180 Z" fill="url(#grad-cyan)"/>
+                <path d="M0,70 Q75,60 150,75 T300,55 T450,65 T600,50" fill="none" stroke="#06b6d4" stroke-width="2.5"/>
+                <!-- Area Delays -->
+                <path d="M0,150 Q75,145 150,155 T300,135 T450,140 T600,130 L600,180 L0,180 Z" fill="url(#grad-red)"/>
+                <path d="M0,150 Q75,145 150,155 T300,135 T450,140 T600,130" fill="none" stroke="#ef4444" stroke-width="2"/>
+                <!-- Complaints Line -->
+                <path d="M0,165 Q75,160 150,168 T300,150 T450,155 T600,148" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3"/>
+              </svg>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-dim); font-family:'JetBrains Mono',monospace; margin-top:6px;">
+              <span>Sep 10 (Day 1)</span>
+              <span>Sep 20 (Day 10)</span>
+              <span>Sep 30 (Day 20)</span>
+              <span>Oct 14 (Day 35 - Today)</span>
+            </div>
+          </div>
+
+          <!-- SLA Donut Breakdown -->
+          <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <h3 style="font-size:13.5px; font-weight:700; color:#fff;">SLA Compliance Breakdown</h3>
+              <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Network On-Time vs Delayed Orders</div>
+            </div>
+
+            <div style="display:flex; align-items:center; justify-content:center; margin:16px 0; position:relative;">
+              <svg width="140" height="140" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#1e293b" stroke-width="12"/>
+                <!-- 95.1% green arc -->
+                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#10b981" stroke-width="12" stroke-dasharray="239 251" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+                <!-- 4.9% red arc -->
+                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#ef4444" stroke-width="12" stroke-dasharray="12 251" stroke-dashoffset="-239" transform="rotate(-90 50 50)"/>
+              </svg>
+              <div style="position:absolute; text-align:center;">
+                <div style="font-size:20px; font-weight:700; font-family:'JetBrains Mono',monospace; color:#fff;">95.1%</div>
+                <div style="font-size:9.5px; color:var(--text-dim); text-transform:uppercase;">On-Time SLA</div>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div style="background:var(--bg); padding:8px 10px; border-radius:8px; border:1px solid var(--border);">
+                <div style="font-size:10px; color:var(--green); font-weight:600; text-transform:uppercase;">On-Time Parcels</div>
+                <div style="font-size:14px; font-weight:700; font-family:'JetBrains Mono',monospace; color:#fff;">9,986</div>
+              </div>
+              <div style="background:var(--bg); padding:8px 10px; border-radius:8px; border:1px solid var(--border);">
+                <div style="font-size:10px; color:var(--red); font-weight:600; text-transform:uppercase;">Delayed Parcels</div>
+                <div style="font-size:14px; font-weight:700; font-family:'JetBrains Mono',monospace; color:#fff;">514</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- High-Risk Orders & Prescriptive Recommendations -->
+        <div class="grid grid-2">
+          <!-- Critical Orders Preview -->
+          <div class="table-wrapper">
+            <div class="table-header-bar">
+              <div>
+                <div class="table-title">Critical Late-Risk Orders Preview</div>
+                <div style="font-size:11px; color:var(--text-muted);">Orders flagged by Random Forest model before delivery breach</div>
+              </div>
+              <button class="badge badge-cyan" style="cursor:pointer;" onclick="switchTab('delivery')">View All Orders →</button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Destination</th>
+                  <th>Carrier</th>
+                  <th>Risk Prob</th>
+                  <th style="text-align:right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="preview-orders-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Top Recommended Actions -->
+          <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div class="card-header">
+                <div>
+                  <h3 style="font-size:13.5px; font-weight:700; color:#fff;">Top Prescriptive Interventions</h3>
+                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Ranked by expected SLA improvement and ROI feasibility</div>
+                </div>
+                <button class="badge badge-violet" style="cursor:pointer;" onclick="switchTab('simulator')">Test Simulator</button>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">
+                <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px;">
+                  <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                    <span style="font-size:10px; color:var(--text-dim); text-transform:uppercase; font-weight:700;">Route Optimization</span>
+                    <span class="badge badge-red">Critical Priority</span>
+                  </div>
+                  <div style="font-weight:700; color:#fff; font-size:12px;">Carrier Re-allocation on NYC Corridor</div>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Shift 60% urban parcels from MetroPost to FleetPrime and advance linehaul departure to 21:30.</div>
+                  <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:10.5px; font-family:'JetBrains Mono',monospace;">
+                    <span style="color:var(--green);">+3.1% OTD Lift</span>
+                    <span style="color:var(--cyan-light);">Score: 92.0</span>
+                  </div>
+                </div>
+
+                <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px;">
+                  <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                    <span style="font-size:10px; color:var(--text-dim); text-transform:uppercase; font-weight:700;">Warehouse Allocation</span>
+                    <span class="badge badge-amber">High Priority</span>
+                  </div>
+                  <div style="font-weight:700; color:#fff; font-size:12px;">Spillover Rerouting from Chicago to Dallas</div>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Divert 450 non-express Midwest orders to Dallas Hub to relieve Chicago's 89% capacity strain.</div>
+                  <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:10.5px; font-family:'JetBrains Mono',monospace;">
+                    <span style="color:var(--green);">+2.4% OTD Lift</span>
+                    <span style="color:var(--cyan-light);">Score: 88.5</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="font-size:11px; color:var(--text-dim); border-top:1px solid var(--border); padding-top:10px; margin-top:10px;">
+              Potential Combined Network Lift: <strong style="color:var(--green); font-family:'JetBrains Mono',monospace;">+5.8% OTD</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: DELIVERY INTELLIGENCE -->
+      <section id="tab-delivery" class="tab-content">
+        <div class="card" style="margin-bottom:14px; padding:12px 16px; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:10px;">
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:10px;">
+            <span style="font-size:11.5px; font-weight:600; color:var(--cyan-light);">Telemetry Filters:</span>
+            
+            <select class="filter-select" id="order-status-filter" onchange="renderOrdersTable()">
+              <option value="ALL">All Delivery Statuses</option>
+              <option value="Delivered">Delivered</option>
+              <option value="In Transit">In Transit</option>
+              <option value="Delayed">Delayed</option>
+            </select>
+
+            <select class="filter-select" id="order-risk-filter" onchange="renderOrdersTable()">
+              <option value="ALL">All Risk Tiers</option>
+              <option value="High">High Risk (&gt;35%)</option>
+              <option value="Medium">Medium Risk (15-35%)</option>
+              <option value="Low">Low Risk (&lt;15%)</option>
+            </select>
+
+            <select class="filter-select" id="order-city-filter" onchange="renderOrdersTable()">
+              <option value="ALL">All Destination Cities</option>
+              <option value="New York City">New York City, NY</option>
+              <option value="Boston">Boston, MA</option>
+              <option value="Philadelphia">Philadelphia, PA</option>
+              <option value="Detroit">Detroit, MI</option>
+              <option value="San Francisco">San Francisco, CA</option>
+              <option value="Seattle">Seattle, WA</option>
+              <option value="Houston">Houston, TX</option>
+            </select>
+          </div>
+
+          <div style="font-size:11.5px; color:var(--text-dim);">
+            Showing <strong style="color:#fff;" id="filtered-orders-count">20</strong> sample orders
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Order Date</th>
+                <th>Destination</th>
+                <th>Warehouse</th>
+                <th>Carrier</th>
+                <th>Priority</th>
+                <th>Delivery Status</th>
+                <th>Delay</th>
+                <th>Risk Prob</th>
+                <th>Risk Tier</th>
+                <th style="text-align:right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="full-orders-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 3: ROOT CAUSE DIAGNOSTICS -->
+      <section id="tab-root-cause" class="tab-content">
+        <div class="card" style="margin-bottom:18px; background:linear-gradient(90deg, var(--card), rgba(8,12,21,0.9));">
+          <div style="font-size:11px; text-transform:uppercase; font-weight:700; color:var(--red);">Causal Diagnostics Isolation</div>
+          <h2 style="font-size:18px; font-weight:700; color:#fff; margin:4px 0;">Why Deliveries Are Delayed Despite Adequate Capacity</h2>
+          <p style="font-size:12px; color:var(--text-muted); max-width:850px; line-height:1.5;">
+            Our Fisher Exact statistical solver proved that delay variance is concentrated in specific micro-bottlenecks: <strong style="color:#fff;">Chicago peak-hour queue backlog</strong> (odds ratio 6.42x) and <strong style="color:#fff;">MetroPost urban carrier failure</strong> (odds ratio 5.85x), not aggregate network square footage deficits.
+          </p>
+        </div>
+
+        <div class="grid grid-3" style="margin-bottom:18px;">
+          <div class="card" style="border-left:4px solid var(--red);">
+            <div class="card-header">
+              <span class="badge badge-red">#1 Primary Root Cause</span>
+              <span style="font-family:'JetBrains Mono',monospace; color:var(--red); font-size:11px; font-weight:700;">81.9% Delayed Orders</span>
+            </div>
+            <h4 style="font-size:14px; font-weight:700; color:#fff; margin-bottom:4px;">Warehouse Queue Congestion</h4>
+            <p style="font-size:11.5px; color:var(--text-muted);">Chicago Hub (WH-ORD) capacity exceeds 85%, increasing processing duration up to 2.4x.</p>
+            <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--border); font-size:11px; display:flex; justify-content:space-between;">
+              <span style="color:var(--text-dim);">Odds Ratio: <strong style="color:#fff;">6.42x (p&lt;0.001)</strong></span>
+              <span style="color:var(--cyan-light);">Cost: $17,892</span>
+            </div>
+          </div>
+
+          <div class="card" style="border-left:4px solid var(--red);">
+            <div class="card-header">
+              <span class="badge badge-red">#2 Urban Bottleneck</span>
+              <span style="font-family:'JetBrains Mono',monospace; color:var(--red); font-size:11px; font-weight:700;">65.6% Delayed Orders</span>
+            </div>
+            <h4 style="font-size:14px; font-weight:700; color:#fff; margin-bottom:4px;">Carrier 1st-Attempt Failure</h4>
+            <p style="font-size:11.5px; color:var(--text-muted);">MetroPost last-mile carrier experiences 22% handoff failure rate on NYC & SF urban routes.</p>
+            <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--border); font-size:11px; display:flex; justify-content:space-between;">
+              <span style="color:var(--text-dim);">Odds Ratio: <strong style="color:#fff;">5.85x (p&lt;0.001)</strong></span>
+              <span style="color:var(--cyan-light);">Cost: $18,535</span>
+            </div>
+          </div>
+
+          <div class="card" style="border-left:4px solid var(--amber);">
+            <div class="card-header">
+              <span class="badge badge-amber">#3 Labor Shortage</span>
+              <span style="font-family:'JetBrains Mono',monospace; color:var(--amber); font-size:11px; font-weight:700;">57.6% Delayed Orders</span>
+            </div>
+            <h4 style="font-size:14px; font-weight:700; color:#fff; margin-bottom:4px;">Seattle Night Shift Absenteeism</h4>
+            <p style="font-size:11.5px; color:var(--text-muted);">Attendance on 22:00-06:00 sorting shift in Seattle drops below 76%, rolling queues to morning.</p>
+            <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--border); font-size:11px; display:flex; justify-content:space-between;">
+              <span style="color:var(--text-dim);">Odds Ratio: <strong style="color:#fff;">3.40x (p&lt;0.01)</strong></span>
+              <span style="color:var(--cyan-light);">Cost: $10,064</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Correlation vs Causation Proof Matrix -->
+        <div class="table-wrapper">
+          <div class="table-header-bar">
+            <div>
+              <div class="table-title">Correlation vs. Causation Proof Matrix</div>
+              <div style="font-size:11px; color:var(--text-muted);">Differentiating true causal drivers from surface confounding artifacts</div>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Operational Factor</th>
+                <th>Observed Correlation</th>
+                <th>Fisher Odds Ratio</th>
+                <th>Causal Validation Mechanism</th>
+                <th>Verdict</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:600; color:#fff;">Peak Hour Warehouse Backlog</td>
+                <td style="color:var(--red); font-family:'JetBrains Mono',monospace;">r = +0.68 (Strong)</td>
+                <td style="font-family:'JetBrains Mono',monospace;">6.42x (p &lt; 0.001)</td>
+                <td>Shifting dispatch to night linehaul eliminates backlog queue</td>
+                <td><span class="badge badge-red">Direct Causal Driver</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600; color:#fff;">MetroPost Carrier Reliability</td>
+                <td style="color:var(--red); font-family:'JetBrains Mono',monospace;">r = +0.72 (Strong)</td>
+                <td style="font-family:'JetBrains Mono',monospace;">5.85x (p &lt; 0.001)</td>
+                <td>Reallocating parcels to FleetPrime cuts 1st-attempt fails by 68%</td>
+                <td><span class="badge badge-red">Direct Causal Driver</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600; color:#fff;">Package Item Count</td>
+                <td style="color:var(--amber); font-family:'JetBrains Mono',monospace;">r = +0.28 (Moderate)</td>
+                <td style="font-family:'JetBrains Mono',monospace;">1.12x (p = 0.24)</td>
+                <td>Multi-item packages only delay when combined with Reno stockout</td>
+                <td><span class="badge badge-amber">Confounding Symptom</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600; color:#fff;">Warehouse Square Footage</td>
+                <td style="color:var(--text-dim); font-family:'JetBrains Mono',monospace;">r = -0.08 (None)</td>
+                <td style="font-family:'JetBrains Mono',monospace;">0.98x (p = 0.82)</td>
+                <td>Building footprint has zero impact on sorting cycle time</td>
+                <td><span class="badge" style="background:#1e293b; color:var(--text-dim);">Non-Causal Artifact</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 4: WAREHOUSE OPERATIONS -->
+      <section id="tab-warehouse" class="tab-content">
+        <div class="grid grid-4" style="margin-bottom:18px;">
+          <div class="card" style="border-color:rgba(239,68,68,0.4);">
+            <div class="card-header">
+              <span style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--cyan);">WH-ORD</span>
+              <span class="badge badge-red">Critical (89.2%)</span>
+            </div>
+            <h4 style="font-size:14px; font-weight:700; color:#fff;">Chicago Central Hub</h4>
+            <div style="margin:10px 0;">
+              <div class="svg-bar-track">
+                <div class="svg-bar-fill" style="width:89.2%; background:var(--red);"></div>
+              </div>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace;">
+              <span>Backlog: 3,120 pkgs</span>
+              <span>Proc: 5.4 hrs</span>
+            </div>
+          </div>
+
+          <div class="card" style="border-color:rgba(245,158,11,0.4);">
+            <div class="card-header">
+              <span style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--cyan);">WH-EWR</span>
+              <span class="badge badge-amber">Warning (84.1%)</span>
+            </div>
+            <h4 style="font-size:14px; font-weight:700; color:#fff;">Newark East Gateway</h4>
+            <div style="margin:10px 0;">
+              <div class="svg-bar-track">
+                <div class="svg-bar-fill" style="width:84.1%; background:var(--amber);"></div>
+              </div>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace;">
+              <span>Backlog: 2,350 pkgs</span>
+              <span>Proc: 4.8 hrs</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--cyan);">WH-SEA</span>
+              <span class="badge badge-amber">Warning (82.0%)</span>
+            </div>
+            <h4 style="font-size:14px; font-weight:700; color:#fff;">Seattle Pacific</h4>
+            <div style="margin:10px 0;">
+              <div class="svg-bar-track">
+                <div class="svg-bar-fill" style="width:82.0%; background:var(--amber);"></div>
+              </div>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace;">
+              <span>Backlog: 1,800 pkgs</span>
+              <span>Proc: 4.3 hrs</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--cyan);">WH-DFW</span>
+              <span class="badge badge-green">Optimal (73.5%)</span>
+            </div>
+            <h4 style="font-size:14px; font-weight:700; color:#fff;">Dallas South Central</h4>
+            <div style="margin:10px 0;">
+              <div class="svg-bar-track">
+                <div class="svg-bar-fill" style="width:73.5%; background:var(--green);"></div>
+              </div>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace;">
+              <span>Backlog: 2,200 pkgs</span>
+              <span>Proc: 3.4 hrs</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <div class="table-header-bar">
+            <div class="table-title">Fulfillment Node Operational Summary</div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Node ID</th>
+                <th>Facility Name</th>
+                <th>Metro Location</th>
+                <th>Daily Capacity</th>
+                <th>Queued Backlog</th>
+                <th>Utilization</th>
+                <th>Avg Proc Time</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono" style="color:var(--cyan); font-weight:700;">WH-ORD</td>
+                <td style="font-weight:600; color:#fff;">Chicago Central Hub</td>
+                <td>Chicago, IL</td>
+                <td class="mono">3,500 pkgs</td>
+                <td class="mono" style="color:var(--red); font-weight:700;">3,120 pkgs</td>
+                <td class="mono" style="color:var(--red); font-weight:700;">89.2%</td>
+                <td class="mono">5.4 hrs</td>
+                <td><span class="badge badge-red">Critical Queue</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color:var(--cyan); font-weight:700;">WH-EWR</td>
+                <td style="font-weight:600; color:#fff;">Newark East Gateway</td>
+                <td>Newark, NJ</td>
+                <td class="mono">2,800 pkgs</td>
+                <td class="mono" style="color:var(--amber);">2,350 pkgs</td>
+                <td class="mono" style="color:var(--amber);">84.1%</td>
+                <td class="mono">4.8 hrs</td>
+                <td><span class="badge badge-amber">Congested</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color:var(--cyan); font-weight:700;">WH-SEA</td>
+                <td style="font-weight:600; color:#fff;">Seattle Pacific</td>
+                <td>Seattle, WA</td>
+                <td class="mono">2,200 pkgs</td>
+                <td class="mono">1,800 pkgs</td>
+                <td class="mono">82.0%</td>
+                <td class="mono">4.3 hrs</td>
+                <td><span class="badge badge-amber">Staff Shortage</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color:var(--cyan); font-weight:700;">WH-DFW</td>
+                <td style="font-weight:600; color:#fff;">Dallas South Central</td>
+                <td>Dallas, TX</td>
+                <td class="mono">3,000 pkgs</td>
+                <td class="mono" style="color:var(--green);">2,200 pkgs</td>
+                <td class="mono" style="color:var(--green);">73.5%</td>
+                <td class="mono">3.4 hrs</td>
+                <td><span class="badge badge-green">Surplus Capacity</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color:var(--cyan); font-weight:700;">WH-RNO</td>
+                <td style="font-weight:600; color:#fff;">Reno West Hub</td>
+                <td>Reno, NV</td>
+                <td class="mono">2,000 pkgs</td>
+                <td class="mono">1,480 pkgs</td>
+                <td class="mono" style="color:var(--green);">74.0%</td>
+                <td class="mono">3.6 hrs</td>
+                <td><span class="badge badge-amber">Stockout Alert</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 5: ROUTE OPTIMIZATION -->
+      <section id="tab-routes" class="tab-content">
+        <div class="grid grid-4" style="margin-bottom:18px;">
+          <div class="card" style="border-color:rgba(16,185,129,0.3);">
+            <div class="card-header">
+              <span class="badge badge-green">Tier 1 Carrier</span>
+              <span class="mono" style="color:var(--green); font-weight:700;">95.2% OTD</span>
+            </div>
+            <h4 style="font-size:14px; font-weight:700; color:#fff;">FleetPrime Logistics</h4>
+            <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">Best suburban & regional reliability. Low first-attempt failure.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-cyan">Tier 2 Carrier</span>
+              <span class="mono" style="color:#fff; font-weight:700;">93.8% OTD</span>
+            </div>
+            <h4 style="font-size:14px; font-weight:700; color:#fff;">ApexFreight Linehaul</h4>
+            <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">Dependable cross-country long-haul corridors.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-cyan">Tier 2 Carrier</span>
+              <span class="mono" style="color:#fff; font-weight:700;">92.5% OTD</span>
+            </div>
+            <h4 style="font-size:14px; font-weight:700; color:#fff;">SwiftLog Express</h4>
+            <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">High volume Midwest & Northwest regional linehaul.</p>
+          </div>
+
+          <div class="card" style="border-color:rgba(239,68,68,0.4);">
+            <div class="card-header">
+              <span class="badge badge-red">Critical Risk</span>
+              <span class="mono" style="color:var(--red); font-weight:700;">78.5% OTD</span>
+            </div>
+            <h4 style="font-size:14px; font-weight:700; color:#fff;">MetroPost Urban Partner</h4>
+            <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">Severe 1st-attempt delivery failures on high-density NYC & SF routes.</p>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <div class="table-header-bar">
+            <div class="table-title">Major Inter-City Corridors Telemetry</div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Route ID</th>
+                <th>Origin Facility</th>
+                <th>Destination Metro</th>
+                <th>Distance</th>
+                <th>Transit Time</th>
+                <th>Traffic Multiplier</th>
+                <th>Carrier In-Use</th>
+                <th>Reliability</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono" style="color:var(--cyan); font-weight:700;">RT-EWR-NYC</td>
+                <td style="color:#fff;">WH-EWR (Newark)</td>
+                <td>New York City, NY</td>
+                <td class="mono">25 km</td>
+                <td class="mono">4.6 hrs</td>
+                <td><span class="badge badge-red">1.85x Congested</span></td>
+                <td>MetroPost</td>
+                <td class="mono" style="color:var(--red); font-weight:700;">78%</td>
+              </tr>
+              <tr>
+                <td class="mono" style="color:var(--cyan); font-weight:700;">RT-EWR-BOS</td>
+                <td style="color:#fff;">WH-EWR (Newark)</td>
+                <td>Boston, MA</td>
+                <td class="mono">360 km</td>
+                <td class="mono">8.4 hrs</td>
+                <td><span class="badge badge-amber">1.45x Moderate</span></td>
+                <td>SwiftLog</td>
+                <td class="mono" style="color:var(--amber);">89%</td>
+              </tr>
+              <tr>
+                <td class="mono" style="color:var(--cyan); font-weight:700;">RT-ORD-DET</td>
+                <td style="color:#fff;">WH-ORD (Chicago)</td>
+                <td>Detroit, MI</td>
+                <td class="mono">460 km</td>
+                <td class="mono">8.1 hrs</td>
+                <td><span class="badge badge-green">1.25x Normal</span></td>
+                <td>ApexFreight</td>
+                <td class="mono" style="color:var(--green);">94%</td>
+              </tr>
+              <tr>
+                <td class="mono" style="color:var(--cyan); font-weight:700;">RT-RNO-SFO</td>
+                <td style="color:#fff;">WH-RNO (Reno)</td>
+                <td>San Francisco, CA</td>
+                <td class="mono">350 km</td>
+                <td class="mono">7.6 hrs</td>
+                <td><span class="badge badge-red">1.55x High</span></td>
+                <td>MetroPost</td>
+                <td class="mono" style="color:var(--red); font-weight:700;">83%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 6: STAFFING INTELLIGENCE -->
+      <section id="tab-staffing" class="tab-content">
+        <div class="card" style="margin-bottom:18px; border-left:4px solid var(--amber);">
+          <div style="font-size:11px; text-transform:uppercase; font-weight:700; color:var(--amber);">Workforce Bottleneck Alert</div>
+          <h3 style="font-size:15px; font-weight:700; color:#fff; margin:2px 0;">Seattle Hub Night Shift Absenteeism (&lt;76% Attendance)</h3>
+          <p style="font-size:11.5px; color:var(--text-muted); max-width:850px;">
+            Night sorting shift at Seattle Hub operates with only 76.2% attendance, leaving 180 parcels unpicked each night. Transferring 4 morning flex-pickers with a 12% shift differential eliminates queue spillover.
+          </p>
+        </div>
+
+        <div class="table-wrapper">
+          <div class="table-header-bar">
+            <div class="table-title">Shift Coverage & Productivity Matrix</div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Warehouse</th>
+                <th>Shift Schedule</th>
+                <th>Assigned Headcount</th>
+                <th>30-Day Attendance</th>
+                <th>Productivity Rate</th>
+                <th>Operational Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:600; color:#fff;">Seattle Pacific (WH-SEA)</td>
+                <td>Night (22:00-06:00)</td>
+                <td class="mono">6 personnel</td>
+                <td class="mono" style="color:var(--red); font-weight:700;">76.2%</td>
+                <td class="mono">16.8 units/hr</td>
+                <td><span class="badge badge-red">Severe Deficit</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600; color:#fff;">Seattle Pacific (WH-SEA)</td>
+                <td>Morning (06:00-14:00)</td>
+                <td class="mono">8 personnel</td>
+                <td class="mono" style="color:var(--green);">94.5%</td>
+                <td class="mono">28.4 units/hr</td>
+                <td><span class="badge badge-green">Surplus Capacity</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600; color:#fff;">Chicago Central (WH-ORD)</td>
+                <td>Afternoon (14:00-22:00)</td>
+                <td class="mono">12 personnel</td>
+                <td class="mono" style="color:var(--amber);">87.2%</td>
+                <td class="mono">24.5 units/hr</td>
+                <td><span class="badge badge-amber">Peak Load</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600; color:#fff;">Dallas South (WH-DFW)</td>
+                <td>Morning (06:00-14:00)</td>
+                <td class="mono">10 personnel</td>
+                <td class="mono" style="color:var(--green);">96.1%</td>
+                <td class="mono">29.8 units/hr</td>
+                <td><span class="badge badge-green">High Efficiency</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 7: INVENTORY INTELLIGENCE -->
+      <section id="tab-inventory" class="tab-content">
+        <div class="card" style="margin-bottom:18px; border-left:4px solid var(--red);">
+          <div style="font-size:11px; text-transform:uppercase; font-weight:700; color:var(--red);">Stockout Breach Alert</div>
+          <h3 style="font-size:15px; font-weight:700; color:#fff; margin:2px 0;">Consumer Electronics Stockout in Reno Hub Forcing Drop-Ship Lag (+24h)</h3>
+          <p style="font-size:11.5px; color:var(--text-muted); max-width:850px;">
+            Dallas Hub holds 240% safety stock reserve on matching SKUs. Automated inter-hub transfer of 350 units resolves 90% of stockout holds.
+          </p>
+        </div>
+
+        <div class="table-wrapper">
+          <div class="table-header-bar">
+            <div class="table-title">SKU Inventory Telemetry Sample</div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>SKU Code</th>
+                <th>Product Description</th>
+                <th>Category</th>
+                <th>Warehouse</th>
+                <th>On Hand</th>
+                <th>Reserved</th>
+                <th>Net Available</th>
+                <th>Stock Health</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono" style="color:var(--cyan); font-weight:700;">SKU-0003</td>
+                <td style="font-weight:600; color:#fff;">Fast-Charging MagSafe PowerBank 20k</td>
+                <td>Consumer Electronics</td>
+                <td class="mono">WH-RNO</td>
+                <td class="mono">12</td>
+                <td class="mono">34</td>
+                <td class="mono" style="color:var(--red); font-weight:700;">-22</td>
+                <td><span class="badge badge-red">Stockout Breach</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color:var(--cyan); font-weight:700;">SKU-0003</td>
+                <td style="font-weight:600; color:#fff;">Fast-Charging MagSafe PowerBank 20k</td>
+                <td>Consumer Electronics</td>
+                <td class="mono">WH-DFW</td>
+                <td class="mono">450</td>
+                <td class="mono">120</td>
+                <td class="mono" style="color:var(--green); font-weight:700;">+330</td>
+                <td><span class="badge badge-green">Surplus Reserve</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color:var(--cyan); font-weight:700;">SKU-0001</td>
+                <td style="font-weight:600; color:#fff;">Noise-Canceling Wireless Headphones</td>
+                <td>Consumer Electronics</td>
+                <td class="mono">WH-ORD</td>
+                <td class="mono">280</td>
+                <td class="mono">190</td>
+                <td class="mono" style="color:var(--green); font-weight:700;">+90</td>
+                <td><span class="badge badge-green">Adequate</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 8: OPS COPILOT AI -->
+      <section id="tab-copilot" class="tab-content">
+        <div class="copilot-shell">
+          <!-- Left Prompts Sidebar -->
+          <div class="copilot-history">
+            <div style="font-size:11px; font-weight:700; color:#fff; text-transform:uppercase; margin-bottom:10px;">Suggested Analytical Prompts</div>
+            <div style="overflow-y:auto; flex:1;">
+              <button class="prompt-chip" onclick="askCopilot('Why are deliveries delayed even though capacity is sufficient?')">
+                Why are deliveries delayed even though capacity is sufficient?
+              </button>
+              <button class="prompt-chip" onclick="askCopilot('Which warehouse is contributing most to delays?')">
+                Which warehouse is contributing most to delays?
+              </button>
+              <button class="prompt-chip" onclick="askCopilot('Which orders are at immediate risk?')">
+                Which orders are at immediate risk?
+              </button>
+              <button class="prompt-chip" onclick="askCopilot('Is staffing causing dispatch bottlenecks?')">
+                Is staffing causing dispatch bottlenecks?
+              </button>
+              <button class="prompt-chip" onclick="askCopilot('Which routes should be optimized?')">
+                Which routes should be optimized?
+              </button>
+              <button class="prompt-chip" onclick="askCopilot('Which inventory shortages are affecting delivery promises?')">
+                Which inventory shortages are affecting delivery promises?
+              </button>
+              <button class="prompt-chip" onclick="askCopilot('What is the best way to improve on-time delivery without adding resources?')">
+                What is the best way to improve on-time delivery without adding resources?
+              </button>
+            </div>
+            <button class="badge" style="background:var(--bg); border:1px solid var(--border); color:var(--text-muted); cursor:pointer; width:100%; justify-content:center; padding:8px 0; margin-top:10px;" onclick="clearChat()">
+              Reset Conversation
+            </button>
+          </div>
+
+          <!-- Right Conversation Stream -->
+          <div class="copilot-chat">
+            <div class="chat-stream" id="chat-stream">
+              <div class="chat-msg assistant">
+                <div class="chat-avatar">AI</div>
+                <div class="chat-bubble">
+                  Hello! I am your <strong>Ops Copilot</strong>. I analyze live telemetry across 10,000+ orders, facilities, and carrier corridors. Click any suggested analytical prompt on the left or type a custom question below.
+                </div>
+              </div>
+            </div>
+
+            <div class="chat-input-row">
+              <input type="text" id="chat-input" placeholder="Ask Ops Copilot an operational question (e.g., Which orders are at immediate risk?)..." onkeydown="if(event.key==='Enter') sendChat()">
+              <button class="btn-primary" onclick="sendChat()">Ask AI</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 9: SCENARIO SIMULATOR -->
+      <section id="tab-simulator" class="tab-content">
+        <div class="grid grid-2">
+          <!-- Levers -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 style="font-size:14px; font-weight:700; color:#fff;">Operational Levers & Constraints</h3>
+                <div style="font-size:11.5px; color:var(--text-muted);">Adjust parameters to test discrete-event simulation model</div>
+              </div>
+              <button class="badge badge-cyan" style="cursor:pointer;" onclick="resetSimulator()">Reset</button>
+            </div>
+
+            <div class="slider-group" style="margin-top:14px;">
+              <div class="slider-labels">
+                <span>Warehouse Processing Time Reduction</span>
+                <span id="lbl-proc">-15%</span>
+              </div>
+              <input type="range" id="sim-proc" min="0" max="40" step="5" value="15" oninput="updateSim()">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-labels">
+                <span>Dispatch Prioritization Strategy</span>
+                <span id="lbl-strat" style="color:var(--cyan-light);">Risk-First</span>
+              </div>
+              <select class="filter-select" id="sim-strat" style="width:100%;" onchange="updateSim()">
+                <option value="Risk-First Priority">Risk-First Priority (ML Flagged)</option>
+                <option value="SLA-First">SLA-First (Deadline Expiry Proximity)</option>
+                <option value="FIFO">Standard FIFO</option>
+              </select>
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-labels">
+                <span>Staff Shift Redistribution</span>
+                <span id="lbl-staff">+20%</span>
+              </div>
+              <input type="range" id="sim-staff" min="0" max="30" step="5" value="20" oninput="updateSim()">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-labels">
+                <span>Warehouse Spillover Re-allocation</span>
+                <span id="lbl-realloc">15%</span>
+              </div>
+              <input type="range" id="sim-realloc" min="0" max="25" step="5" value="15" oninput="updateSim()">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-labels">
+                <span>Carrier Shift (MetroPost to FleetPrime)</span>
+                <span id="lbl-carrier">40%</span>
+              </div>
+              <input type="range" id="sim-carrier" min="0" max="80" step="10" value="40" oninput="updateSim()">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-labels">
+                <span>Failed Attempt Mitigation</span>
+                <span id="lbl-fail">-30%</span>
+              </div>
+              <input type="range" id="sim-fail" min="0" max="50" step="5" value="30" oninput="updateSim()">
+            </div>
+          </div>
+
+          <!-- Simulation Comparison Results -->
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div class="grid grid-2">
+              <div class="card">
+                <div class="card-label">On-Time Delivery Rate</div>
+                <div class="card-val" id="sim-res-otd" style="color:var(--green);">97.9%</div>
+                <div class="card-sub" id="sim-res-otd-delta" style="color:var(--green);">+2.8% vs Baseline (95.1%)</div>
+              </div>
+
+              <div class="card">
+                <div class="card-label">Delayed Orders Count</div>
+                <div class="card-val" id="sim-res-delays" style="color:var(--green);">217</div>
+                <div class="card-sub" id="sim-res-delays-delta" style="color:var(--green);">-297 orders avoided</div>
+              </div>
+
+              <div class="card">
+                <div class="card-label">Average Delay</div>
+                <div class="card-val" id="sim-res-delay">10.3 hrs</div>
+                <div class="card-sub" id="sim-res-delay-delta" style="color:var(--green);">-1.0 hrs reduction</div>
+              </div>
+
+              <div class="card">
+                <div class="card-label">Net Logistics Cost / Order</div>
+                <div class="card-val" id="sim-res-cost">$24.81</div>
+                <div class="card-sub" id="sim-res-cost-delta" style="color:var(--green);">-$0.72 net savings</div>
+              </div>
+            </div>
+
+            <!-- Trade-off Disclosures -->
+            <div class="card" style="font-size:11.5px; background:rgba(8,12,21,0.7);">
+              <div style="font-weight:700; color:#fff; margin-bottom:6px; font-size:12px;">Operational Trade-off Analysis</div>
+              <ul style="padding-left:18px; color:var(--text-muted); line-height:1.6;">
+                <li>Shifting 40% volume from MetroPost to FleetPrime incurs an upfront carrier premium of +$0.85/order, but avoids over $18,000 in customer appeasement vouchers.</li>
+                <li>Implementing 'Risk-First' dispatch compresses high-risk order latency by 2.8 hours while minimally deferring lower-priority 72-hour standard ground shipments.</li>
+                <li>Night-shift flex balancing incurs a 12% shift differential expense, but prevents queue overflow into peak morning sorting windows.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 10: DATA & MODEL EXPLORER -->
+      <section id="tab-data-explorer" class="tab-content">
+        <div class="grid grid-4" style="margin-bottom:18px;">
+          <div class="card">
+            <div class="card-label">ROC-AUC Discriminator</div>
+            <div class="card-val" style="color:var(--cyan-light);">0.9294</div>
+            <div class="card-sub" style="color:var(--green);">Exceptional Class Separation</div>
+          </div>
+
+          <div class="card">
+            <div class="card-label">Precision Score</div>
+            <div class="card-val">88.7%</div>
+            <div class="card-sub">Positive Predictive Value</div>
+          </div>
+
+          <div class="card">
+            <div class="card-label">Recall Sensitivity</div>
+            <div class="card-val">51.2%</div>
+            <div class="card-sub">Catching true delay breaches</div>
+          </div>
+
+          <div class="card">
+            <div class="card-label">F1 Optimization Metric</div>
+            <div class="card-val" style="color:var(--violet-light);">0.6495</div>
+            <div class="card-sub" style="color:var(--green);">+591.0% vs Heuristic Baseline</div>
+          </div>
+        </div>
+
+        <!-- Confusion Matrix & Feature Importances -->
+        <div class="grid grid-2" style="margin-bottom:18px;">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 style="font-size:13.5px; font-weight:700; color:#fff;">Holdout Confusion Matrix (N = 2,560)</h3>
+                <div style="font-size:11px; color:var(--text-muted);">25% stratified out-of-time test partition</div>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;">
+              <div style="background:var(--bg); border:1px solid rgba(16,185,129,0.3); border-radius:8px; padding:12px;">
+                <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase; font-weight:700;">True Negative</div>
+                <div style="font-size:20px; font-weight:700; font-family:'JetBrains Mono',monospace; color:var(--green); margin:2px 0;">2,429</div>
+                <div style="font-size:10.5px; color:var(--text-muted);">Correctly predicted on-time</div>
+              </div>
+
+              <div style="background:var(--bg); border:1px solid rgba(239,68,68,0.3); border-radius:8px; padding:12px;">
+                <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase; font-weight:700;">False Positive</div>
+                <div style="font-size:20px; font-weight:700; font-family:'JetBrains Mono',monospace; color:var(--red); margin:2px 0;">8</div>
+                <div style="font-size:10.5px; color:var(--text-muted);">False alarm rate: 0.3%</div>
+              </div>
+
+              <div style="background:var(--bg); border:1px solid rgba(239,68,68,0.3); border-radius:8px; padding:12px;">
+                <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase; font-weight:700;">False Negative</div>
+                <div style="font-size:20px; font-weight:700; font-family:'JetBrains Mono',monospace; color:var(--red); margin:2px 0;">60</div>
+                <div style="font-size:10.5px; color:var(--text-muted);">Late parcels not flagged</div>
+              </div>
+
+              <div style="background:var(--bg); border:1px solid rgba(16,185,129,0.3); border-radius:8px; padding:12px;">
+                <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase; font-weight:700;">True Positive</div>
+                <div style="font-size:20px; font-weight:700; font-family:'JetBrains Mono',monospace; color:var(--green); margin:2px 0;">63</div>
+                <div style="font-size:10.5px; color:var(--text-muted);">Correctly caught breaches</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 style="font-size:13.5px; font-weight:700; color:#fff;">Feature Importance Weights</h3>
+                <div style="font-size:11px; color:var(--text-muted);">Relative Gini impurity reduction</div>
+              </div>
+              <button class="btn-primary" style="font-size:11px; padding:4px 10px;" onclick="downloadCSV()">Export CSV</button>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px; font-size:11.5px;">
+              <div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                  <span class="mono">route_distance</span>
+                  <span class="mono" style="color:var(--cyan-light);">0.295</span>
+                </div>
+                <div class="svg-bar-track"><div class="svg-bar-fill" style="width:29.5%; background:var(--cyan);"></div></div>
+              </div>
+
+              <div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                  <span class="mono">total_order_value</span>
+                  <span class="mono" style="color:var(--cyan-light);">0.187</span>
+                </div>
+                <div class="svg-bar-track"><div class="svg-bar-fill" style="width:18.7%; background:var(--cyan);"></div></div>
+              </div>
+
+              <div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                  <span class="mono">sla_hours_window</span>
+                  <span class="mono" style="color:var(--cyan-light);">0.156</span>
+                </div>
+                <div class="svg-bar-track"><div class="svg-bar-fill" style="width:15.6%; background:var(--cyan);"></div></div>
+              </div>
+
+              <div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                  <span class="mono">carrier_reliability</span>
+                  <span class="mono" style="color:var(--cyan-light);">0.086</span>
+                </div>
+                <div class="svg-bar-track"><div class="svg-bar-fill" style="width:8.6%; background:var(--cyan);"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- Order Detail Drawer Modal -->
+<div class="drawer-overlay" id="order-drawer" onclick="if(event.target===this) closeDrawer()">
+  <div class="drawer">
+    <div class="drawer-header">
+      <div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="mono" style="font-size:11.5px; font-weight:700; color:var(--cyan-light); background:var(--cyan-glow); padding:2px 8px; border-radius:4px; border:1px solid rgba(6,182,212,0.4);" id="d-order-id">ORD-20261042</span>
+          <span class="badge badge-red" id="d-status">Delayed</span>
+        </div>
+        <div style="font-size:15px; font-weight:700; color:#fff; margin-top:4px;">Operational Order Telemetry</div>
+      </div>
+      <button style="background:transparent; border:0; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="closeDrawer()">✕</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Order Quick Stats -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px;">
+          <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase; font-weight:700;">Destination City</div>
+          <div style="font-size:13px; font-weight:700; color:#fff; margin-top:2px;" id="d-city">New York City, NY</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px;">
+          <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase; font-weight:700;">Assigned Carrier</div>
+          <div style="font-size:13px; font-weight:700; color:#fff; margin-top:2px;" id="d-carrier">MetroPost</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px;">
+          <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase; font-weight:700;">SLA Window</div>
+          <div style="font-size:13px; font-weight:700; color:#fff; margin-top:2px;" id="d-sla">Prime 2-Day (36h)</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px;">
+          <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase; font-weight:700;">Delay Added</div>
+          <div style="font-size:13px; font-weight:700; color:var(--red); font-family:'JetBrains Mono',monospace; margin-top:2px;" id="d-delay">+16.4 hrs</div>
+        </div>
+      </div>
+
+      <!-- ML Risk Card -->
+      <div class="card" style="background:linear-gradient(135deg, var(--card), rgba(8,12,21,0.9));">
+        <div class="card-header">
+          <span style="font-size:11px; text-transform:uppercase; font-weight:700; color:var(--red);">AI Pre-Dispatch Risk Discriminator</span>
+          <span class="badge badge-red" id="d-risk-tier">High Risk (86%)</span>
+        </div>
+        <div class="svg-bar-track" style="margin:8px 0;">
+          <div class="svg-bar-fill" id="d-risk-bar" style="width:86%; background:linear-gradient(90deg, var(--amber), var(--red));"></div>
+        </div>
+        <div style="font-size:11px; color:var(--text-muted); line-height:1.5;">
+          <strong>Top Contributing Risk Drivers:</strong>
+          <div style="margin-top:4px; display:flex; flex-direction:column; gap:4px;">
+            <div style="background:var(--bg); padding:6px 8px; border-radius:6px; display:flex; justify-content:space-between;">
+              <span>Metropolitan Corridor Traffic Index</span>
+              <span class="mono" style="color:var(--red);">+28% Risk</span>
+            </div>
+            <div style="background:var(--bg); padding:6px 8px; border-radius:6px; display:flex; justify-content:space-between;">
+              <span>Carrier First-Attempt Reliability</span>
+              <span class="mono" style="color:var(--red);">+24% Risk</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="card">
+        <div style="font-weight:700; color:#fff; font-size:12.5px; margin-bottom:8px;">Operational Delivery Stepper</div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot done"></div>
+            <div class="tl-title">Order Placed & Validated</div>
+            <div class="tl-meta">2026-10-12 14:20:00 EST</div>
+            <div class="tl-desc">Order verified with 3 items ($189.50). Routed to Newark Hub (WH-EWR).</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot done"></div>
+            <div class="tl-title">Warehouse Picking & Staging</div>
+            <div class="tl-meta">2026-10-12 19:40:00 EST (+5.3h)</div>
+            <div class="tl-desc">Sorted in batch #842. Processing duration: 5.3 hours.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot alert"></div>
+            <div class="tl-title">Linehaul Dispatch Bottleneck</div>
+            <div class="tl-meta">2026-10-13 10:15:00 EST (+14.5h)</div>
+            <div class="tl-desc">Peak-hour I-95 corridor congestion (1.85x traffic) added 4.2h transit delay.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot alert"></div>
+            <div class="tl-title">Carrier First-Attempt Failed</div>
+            <div class="tl-meta">2026-10-14 16:45:00 EST</div>
+            <div class="tl-desc">MetroPost driver reported missed access window. Rescheduled to tomorrow (+16.4h SLA breach).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <button class="btn-primary" style="padding:12px; width:100%;" id="btn-intervene" onclick="applyIntervention()">
+        Apply Proactive SLA Courier Intercept
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Mock Telemetry Dataset
+const SAMPLE_ORDERS = [
+  { id: 'ORD-20261001', date: '2026-10-14 09:20', city: 'New York City', state: 'NY', wh: 'WH-EWR', carrier: 'MetroPost', priority: 'Prime 2-Day', status: 'Delayed', delay: 14.2, prob: 0.88, risk: 'High' },
+  { id: 'ORD-20261002', date: '2026-10-14 09:45', city: 'Boston', state: 'MA', wh: 'WH-EWR', carrier: 'SwiftLog', priority: 'Express', status: 'Delayed', delay: 8.5, prob: 0.74, risk: 'High' },
+  { id: 'ORD-20261003', date: '2026-10-14 10:10', city: 'Detroit', state: 'MI', wh: 'WH-ORD', carrier: 'ApexFreight', priority: 'Standard', status: 'Delivered', delay: 0.0, prob: 0.12, risk: 'Low' },
+  { id: 'ORD-20261004', date: '2026-10-14 10:35', city: 'San Francisco', state: 'CA', wh: 'WH-RNO', carrier: 'MetroPost', priority: 'Prime 2-Day', status: 'Delayed', delay: 18.2, prob: 0.82, risk: 'High' },
+  { id: 'ORD-20261005', date: '2026-10-14 11:00', city: 'Houston', state: 'TX', wh: 'WH-DFW', carrier: 'FleetPrime', priority: 'Express', status: 'Delivered', delay: 0.0, prob: 0.08, risk: 'Low' },
+  { id: 'ORD-20261006', date: '2026-10-14 11:15', city: 'Philadelphia', state: 'PA', wh: 'WH-EWR', carrier: 'FleetPrime', priority: 'Prime 2-Day', status: 'Delivered', delay: 0.0, prob: 0.14, risk: 'Low' },
+  { id: 'ORD-20261007', date: '2026-10-14 11:40', city: 'Portland', state: 'OR', wh: 'WH-SEA', carrier: 'SwiftLog', priority: 'Express', status: 'Delayed', delay: 6.8, prob: 0.45, risk: 'Medium' },
+  { id: 'ORD-20261008', date: '2026-10-14 12:05', city: 'Chicago', state: 'IL', wh: 'WH-ORD', carrier: 'ApexFreight', priority: 'Standard', status: 'Delivered', delay: 0.0, prob: 0.09, risk: 'Low' },
+  { id: 'ORD-20261009', date: '2026-10-14 12:30', city: 'New York City', state: 'NY', wh: 'WH-EWR', carrier: 'MetroPost', priority: 'Express', status: 'Delayed', delay: 12.0, prob: 0.79, risk: 'High' },
+  { id: 'ORD-20261010', date: '2026-10-14 12:55', city: 'Austin', state: 'TX', wh: 'WH-DFW', carrier: 'SwiftLog', priority: 'Standard', status: 'Delivered', delay: 0.0, prob: 0.07, risk: 'Low' },
+  { id: 'ORD-20261011', date: '2026-10-14 13:20', city: 'Seattle', state: 'WA', wh: 'WH-SEA', carrier: 'ApexFreight', priority: 'Prime 2-Day', status: 'In Transit', delay: 0.0, prob: 0.28, risk: 'Medium' },
+  { id: 'ORD-20261012', date: '2026-10-14 13:45', city: 'Minneapolis', state: 'MN', wh: 'WH-ORD', carrier: 'ApexFreight', priority: 'Express', status: 'Delivered', delay: 0.0, prob: 0.10, risk: 'Low' },
+  { id: 'ORD-20261013', date: '2026-10-14 14:10', city: 'Las Vegas', state: 'NV', wh: 'WH-RNO', carrier: 'SwiftLog', priority: 'Standard', status: 'Delivered', delay: 0.0, prob: 0.11, risk: 'Low' },
+  { id: 'ORD-20261014', date: '2026-10-14 14:35', city: 'Boston', state: 'MA', wh: 'WH-EWR', carrier: 'MetroPost', priority: 'Prime 2-Day', status: 'Delayed', delay: 15.5, prob: 0.85, risk: 'High' },
+  { id: 'ORD-20261015', date: '2026-10-14 15:00', city: 'San Antonio', state: 'TX', wh: 'WH-DFW', carrier: 'FleetPrime', priority: 'Express', status: 'Delivered', delay: 0.0, prob: 0.06, risk: 'Low' }
+];
+
+// Tab Switching
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+  const target = document.getElementById('tab-' + tabId);
+  if (target) target.classList.add('active');
+
+  const navs = document.querySelectorAll('.nav-btn');
+  navs.forEach(btn => {
+    if (btn.getAttribute('onclick')?.includes(tabId)) btn.classList.add('active');
+  });
+
+  const titles = {
+    overview: 'Executive Overview',
+    delivery: 'Delivery Intelligence',
+    'root-cause': 'Root Cause Diagnostics',
+    warehouse: 'Warehouse Operations',
+    routes: 'Route Optimization',
+    staffing: 'Staffing Intelligence',
+    inventory: 'Inventory Intelligence',
+    copilot: 'Ops Copilot AI',
+    simulator: 'Scenario Simulator',
+    'data-explorer': 'Data & Model Explorer'
+  };
+
+  document.getElementById('breadcrumb-current').textContent = titles[tabId] || tabId;
+  document.getElementById('page-title').textContent = titles[tabId] || tabId;
+}
+
+// Render Orders in Overview and Delivery tabs
+function renderOrders() {
+  const previewBody = document.getElementById('preview-orders-body');
+  if (previewBody) {
+    const highRisks = SAMPLE_ORDERS.filter(o => o.risk === 'High').slice(0, 5);
+    previewBody.innerHTML = highRisks.map(o => `
+      <tr onclick="openDrawer('${o.id}')">
+        <td class="mono" style="color:var(--cyan-light); font-weight:700;">${o.id}</td>
+        <td>${o.city}, ${o.state}</td>
+        <td>${o.carrier}</td>
+        <td><span class="badge badge-red mono">${Math.round(o.prob * 100)}%</span></td>
+        <td style="text-align:right;"><button class="badge badge-cyan" onclick="event.stopPropagation(); openDrawer('${o.id}')">Inspect</button></td>
+      </tr>
+    `).join('');
+  }
+  renderOrdersTable();
+}
+
+function renderOrdersTable() {
+  const body = document.getElementById('full-orders-body');
+  if (!body) return;
+
+  const statusVal = document.getElementById('order-status-filter')?.value || 'ALL';
+  const riskVal = document.getElementById('order-risk-filter')?.value || 'ALL';
+  const cityVal = document.getElementById('order-city-filter')?.value || 'ALL';
+  const searchVal = (document.getElementById('global-search')?.value || '').toLowerCase();
+
+  const filtered = SAMPLE_ORDERS.filter(o => {
+    if (statusVal !== 'ALL' && o.status !== statusVal) return false;
+    if (riskVal !== 'ALL' && o.risk !== riskVal) return false;
+    if (cityVal !== 'ALL' && o.city !== cityVal) return false;
+    if (searchVal && !o.id.toLowerCase().includes(searchVal) && !o.city.toLowerCase().includes(searchVal) && !o.carrier.toLowerCase().includes(searchVal)) return false;
+    return true;
+  });
+
+  document.getElementById('filtered-orders-count').textContent = filtered.length;
+
+  body.innerHTML = filtered.map(o => `
+    <tr onclick="openDrawer('${o.id}')">
+      <td class="mono" style="color:var(--cyan-light); font-weight:700;">${o.id}</td>
+      <td class="mono" style="color:var(--text-dim);">${o.date}</td>
+      <td style="color:#fff;">${o.city}, ${o.state}</td>
+      <td class="mono" style="color:var(--text-muted);">${o.wh}</td>
+      <td>${o.carrier}</td>
+      <td><span class="badge ${o.priority.includes('Prime') ? 'badge-violet' : 'badge-cyan'}">${o.priority}</span></td>
+      <td><span class="badge ${o.status === 'Delivered' ? 'badge-green' : 'badge-red'}">${o.status}</span></td>
+      <td class="mono" style="color:${o.delay > 0 ? 'var(--red)' : 'var(--text-dim)'}; font-weight:${o.delay > 0 ? '700' : '400'};">${o.delay > 0 ? '+' + o.delay + 'h' : '0.0h'}</td>
+      <td class="mono"><span class="badge ${o.prob > 0.4 ? 'badge-red' : o.prob > 0.15 ? 'badge-amber' : 'badge-green'}">${Math.round(o.prob * 100)}%</span></td>
+      <td><span class="badge ${o.risk === 'High' ? 'badge-red' : o.risk === 'Medium' ? 'badge-amber' : 'badge-green'}">${o.risk}</span></td>
+      <td style="text-align:right;"><button class="badge badge-cyan" onclick="event.stopPropagation(); openDrawer('${o.id}')">Inspect</button></td>
+    </tr>
+  `).join('');
+}
+
+// Drawer
+function openDrawer(orderId) {
+  const ord = SAMPLE_ORDERS.find(o => o.id === orderId) || SAMPLE_ORDERS[0];
+  document.getElementById('d-order-id').textContent = ord.id;
+  document.getElementById('d-city').textContent = ord.city + ', ' + ord.state;
+  document.getElementById('d-carrier').textContent = ord.carrier;
+  document.getElementById('d-sla').textContent = ord.priority;
+  document.getElementById('d-delay').textContent = ord.delay > 0 ? '+' + ord.delay + ' hrs' : '0.0 hrs';
+  document.getElementById('d-risk-tier').textContent = ord.risk + ' Risk (' + Math.round(ord.prob * 100) + '%)';
+  document.getElementById('d-risk-bar').style.width = Math.round(ord.prob * 100) + '%';
+  document.getElementById('d-status').textContent = ord.status;
+
+  const btn = document.getElementById('btn-intervene');
+  btn.textContent = 'Apply Proactive SLA Courier Intercept';
+  btn.style.opacity = '1';
+
+  document.getElementById('order-drawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('order-drawer').classList.remove('open');
+}
+
+function applyIntervention() {
+  const btn = document.getElementById('btn-intervene');
+  btn.textContent = '✓ Intercept Dispatched to FleetPrime';
+  btn.style.opacity = '0.7';
+}
+
+// Warehouse filter handler
+function handleWarehouseChange(val) {
+  if (val === 'ALL') {
+    document.getElementById('kpi-total-orders').textContent = '10,500';
+    document.getElementById('kpi-otd').textContent = '95.1%';
+    document.getElementById('kpi-delays').textContent = '514';
+    document.getElementById('kpi-utilization').textContent = '81.3%';
+  } else if (val === 'WH-ORD') {
+    document.getElementById('kpi-total-orders').textContent = '3,450';
+    document.getElementById('kpi-otd').textContent = '92.4%';
+    document.getElementById('kpi-delays').textContent = '262';
+    document.getElementById('kpi-utilization').textContent = '89.2%';
+  } else if (val === 'WH-DFW') {
+    document.getElementById('kpi-total-orders').textContent = '2,890';
+    document.getElementById('kpi-otd').textContent = '97.8%';
+    document.getElementById('kpi-delays').textContent = '64';
+    document.getElementById('kpi-utilization').textContent = '73.5%';
+  }
+}
+
+function handleSearch(val) {
+  if (val && !document.getElementById('tab-delivery').classList.contains('active')) {
+    switchTab('delivery');
+  }
+  renderOrdersTable();
+}
+
+function refreshTelemetry() {
+  renderOrders();
+}
+
+// Simulator Live Calculations
+function updateSim() {
+  const proc = Number(document.getElementById('sim-proc').value);
+  const staff = Number(document.getElementById('sim-staff').value);
+  const realloc = Number(document.getElementById('sim-realloc').value);
+  const carrier = Number(document.getElementById('sim-carrier').value);
+  const fail = Number(document.getElementById('sim-fail').value);
+  const strat = document.getElementById('sim-strat').value;
+
+  document.getElementById('lbl-proc').textContent = '-' + proc + '%';
+  document.getElementById('lbl-staff').textContent = '+' + staff + '%';
+  document.getElementById('lbl-realloc').textContent = realloc + '%';
+  document.getElementById('lbl-carrier').textContent = carrier + '%';
+  document.getElementById('lbl-fail').textContent = '-' + fail + '%';
+
+  // Constrained simulation logic
+  const baselineLate = 514;
+  const relief = (proc * 0.012) + (staff * 0.008) + (realloc * 0.01) + (carrier * 0.015) + (fail * 0.009) + (strat.includes('Risk') ? 0.018 : 0.005);
+  const simLate = Math.max(120, Math.round(baselineLate * (1 - relief)));
+  const simOtd = ((10500 - simLate) / 10500 * 100).toFixed(1);
+  const deltaOtd = (simOtd - 95.1).toFixed(1);
+
+  document.getElementById('sim-res-otd').textContent = simOtd + '%';
+  document.getElementById('sim-res-otd-delta').textContent = '+' + deltaOtd + '% vs Baseline (95.1%)';
+  document.getElementById('sim-res-delays').textContent = simLate;
+  document.getElementById('sim-res-delays-delta').textContent = (simLate - baselineLate) + ' orders avoided';
+}
+
+function resetSimulator() {
+  document.getElementById('sim-proc').value = 0;
+  document.getElementById('sim-staff').value = 0;
+  document.getElementById('sim-realloc').value = 0;
+  document.getElementById('sim-carrier').value = 0;
+  document.getElementById('sim-fail').value = 0;
+  document.getElementById('sim-strat').value = 'FIFO';
+  updateSim();
+}
+
+// Copilot Interactive Chat
+const COPILOT_KNOWLEDGE = {
+  'why are deliveries delayed': {
+    summary: 'While total aggregate warehouse capacity is adequate, severe micro-bottlenecks drive SLA failures: Chicago Hub suffers peak-hour queue congestion (89.2% utilization), while last-mile carrier MetroPost experiences 22% first-attempt delivery failures on high-density metropolitan corridors.',
+    kpis: [{ l: 'Delayed Orders', v: '514' }, { l: 'Avg Additional Delay', v: '+11.3h' }, { l: 'Financial Penalty', v: '$42,500' }],
+    action: 'Divert 450 Midwest orders from Chicago to Dallas and shift 60% urban parcel volume to FleetPrime.'
+  },
+  'which warehouse': {
+    summary: 'Chicago Central Hub (WH-ORD) is contributing the highest absolute number of delayed orders (262 delayed parcels), driven by 89.2% utilization and a backlog of 3,120 queued parcels. Newark Gateway (WH-EWR) is second with 145 delays.',
+    kpis: [{ l: 'Top Delay Contributor', v: 'WH-ORD Chicago' }, { l: 'Facility Backlog', v: '3,120 pkgs' }, { l: 'Capacity Load', v: '89.2%' }],
+    action: 'Implement spillover load-balancing to Dallas (WH-DFW) and stagger evening picking shifts.'
+  },
+  'immediate risk': {
+    summary: 'Identified 218 active orders in critical SLA breach danger. Top risk orders are concentrated on NYC and Boston corridors with MetroPost carrier assignment and Prime 2-Day deadlines expiring within 8 hours.',
+    kpis: [{ l: 'Immediate Risk Flagged', v: '218 parcels' }, { l: 'Avg Breach Probability', v: '86.4%' }, { l: 'Destination Risk', v: 'NYC / Boston' }],
+    action: 'Trigger proactive carrier upgrade to dedicated hot-shot couriers for top flagged shipments.'
+  },
+  'staffing': {
+    summary: 'Yes, labor shortages directly cause dispatch bottlenecks, most severely at Seattle Pacific (WH-SEA) on the night shift (22:00-06:00) where attendance drops to 76.2%, leaving 180 parcels unpicked each night.',
+    kpis: [{ l: 'Lowest Attendance Shift', v: 'WH-SEA Night' }, { l: 'Attendance Rate', v: '76.2%' }, { l: 'Lost Sorting Units', v: '180 pkgs/shift' }],
+    action: 'Re-assign 4 flex-packers from morning to night shift with a 12% shift differential.'
+  },
+  'routes': {
+    summary: 'The top route requiring immediate optimization is Newark to NYC (RT-EWR-NYC), accounting for 149 delayed deliveries. High traffic friction (1.85x) combined with MetroPost carrier underperformance creates severe variance.',
+    kpis: [{ l: 'Top Delay Corridor', v: 'Newark -> NYC' }, { l: 'Traffic Multiplier', v: '1.85x Congested' }, { l: 'Carrier Reliability', v: '78%' }],
+    action: 'Reschedule linehaul departures to off-peak night travel (21:30) and cap MetroPost volume.'
+  },
+  'inventory': {
+    summary: 'Identified critical stockout breaches in Reno Hub (WH-RNO) on Consumer Electronics (e.g. MagSafe PowerBanks), adding 18-36 hours of fulfillment holding delays. Dallas holds surplus buffer.',
+    kpis: [{ l: 'Breached Category', v: 'Electronics' }, { l: 'Most Affected Hub', v: 'WH-RNO Reno' }, { l: 'Fulfillment Lag', v: '+24.5 hrs' }],
+    action: 'Trigger automated 350-unit safety stock transfer from Dallas to Reno via 48-hr freight.'
+  },
+  'without adding resources': {
+    summary: 'You can achieve an estimated +3.1% On-Time Delivery improvement without adding headcount by implementing 3 operational policy changes: (1) Switching dispatch prioritization from FIFO to Risk-First Priority, (2) Shifting linehaul departures to 21:30 off-peak night windows, and (3) Rebalancing existing morning staff to evening sorting shifts.',
+    kpis: [{ l: 'Projected OTD Lift', v: '+3.1%' }, { l: 'Delay Reduction', v: '-5.8 hrs' }, { l: 'Resource Cost', v: '$0.00' }],
+    action: 'Activate Risk-First queue dispatching and move linehaul departure cutoffs past 20:00.'
+  }
+};
+
+function askCopilot(question) {
+  const chatStream = document.getElementById('chat-stream');
+  
+  // Add User Message
+  chatStream.innerHTML += `
+    <div class="chat-msg user">
+      <div class="chat-avatar">YOU</div>
+      <div class="chat-bubble">${question}</div>
+    </div>
+  `;
+
+  // Find Best Matching Answer
+  const qLower = question.toLowerCase();
+  let match = COPILOT_KNOWLEDGE['why are deliveries delayed'];
+  for (const k in COPILOT_KNOWLEDGE) {
+    if (qLower.includes(k)) {
+      match = COPILOT_KNOWLEDGE[k];
+      break;
+    }
+  }
+
+  // Add Assistant Response
+  setTimeout(() => {
+    chatStream.innerHTML += `
+      <div class="chat-msg assistant">
+        <div class="chat-avatar">AI</div>
+        <div class="chat-bubble">
+          <p style="margin-bottom:10px;">${match.summary}</p>
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:10px;">
+            ${match.kpis.map(kp => `
+              <div style="background:var(--card); border:1px solid var(--border); border-radius:6px; padding:6px 8px;">
+                <div style="font-size:9.5px; color:var(--text-dim); text-transform:uppercase;">${kp.l}</div>
+                <div style="font-size:13px; font-weight:700; font-family:'JetBrains Mono',monospace; color:var(--cyan-light);">${kp.v}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:6px; padding:8px 10px; font-size:11.5px; color:#fff;">
+            <strong style="color:var(--green);">Recommended Action:</strong> ${match.action}
+          </div>
+        </div>
+      </div>
+    `;
+    chatStream.scrollTop = chatStream.scrollHeight;
+  }, 250);
+
+  chatStream.scrollTop = chatStream.scrollHeight;
+}
+
+function sendChat() {
+  const input = document.getElementById('chat-input');
+  const val = input.value.trim();
+  if (!val) return;
+  input.value = '';
+  askCopilot(val);
+}
+
+function clearChat() {
+  document.getElementById('chat-stream').innerHTML = `
+    <div class="chat-msg assistant">
+      <div class="chat-avatar">AI</div>
+      <div class="chat-bubble">
+        Hello! I am your <strong>Ops Copilot</strong>. I analyze live telemetry across 10,000+ orders, facilities, and carrier corridors. Click any suggested analytical prompt on the left or type a custom question below.
+      </div>
+    </div>
+  `;
+}
+
+// Download CSV
+function downloadCSV() {
+  const csvContent = "data:text/csv;charset=utf-8,feature,importance\nroute_distance,0.2953\ntotal_value,0.1871\nsla_hours,0.1560\nis_express,0.0986\ncarrier_reliability,0.0856\ntraffic_multiplier,0.0592\nitems_count,0.0515\nwh_backlog,0.0289\nwh_base_proc,0.0205\nwh_utilization,0.0174";
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "logisense_feature_importance.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// Initialize on Load
+window.addEventListener('DOMContentLoaded', () => {
+  renderOrders();
+});
+</script>
+</body>
+</html>
